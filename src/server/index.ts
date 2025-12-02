@@ -62,7 +62,7 @@ export class Chat extends Server<Env> {
         message.uid
       }', ${JSON.stringify(
         message.data,
-      )}) ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(
+      )}) ON CONFLICT (mid) DO UPDATE SET data = ${JSON.stringify(
         message.data,
       )}`,
     );
