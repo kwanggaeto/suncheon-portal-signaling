@@ -146,7 +146,7 @@ function App() {
   });
 
   return (
-    <div className="container">
+    <div className="parent">
       <div className="chat container">
         {messages.map((message) => (
           <div key={message.mid} className="row message">

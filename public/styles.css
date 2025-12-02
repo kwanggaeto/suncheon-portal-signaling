@@ -18,6 +18,19 @@ html {
   flex-grow: 1;
 }
 
+.parent {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+.flex-child-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
 #root {
   flex: 1;
   display: flex;
