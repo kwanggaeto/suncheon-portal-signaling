@@ -146,25 +146,27 @@ function App() {
   });
 
   return (
-    <div className="chat container">
+    <div className="container">
+      <div className="chat container">
+        {messages.map((message) => (
+          <div key={message.mid} className="row message">
+            <div className="two columns user">{message.uid}</div>
+            <div className="ten columns">{message.data}</div>
+          </div>
+        ))}
+        {showPasswordModal && (
+          <PasswordModal
+            onSubmit={handlePasswordSubmit}
+            onCancel={() => setShowPasswordModal(false)}
+          />
+        )}
+        {showAuthKeyModal && authKey && (
+          <AuthKeyModal authKey={authKey} onClose={() => setShowAuthKeyModal(false)} />
+        )}
+      </div>
       <div className="row">
         <button onClick={handleAuthKeyClick} style={{ marginBottom: "20px" }}>Auth Key</button>
       </div>
-      {messages.map((message) => (
-        <div key={message.mid} className="row message">
-          <div className="two columns user">{message.uid}</div>
-          <div className="ten columns">{message.data}</div>
-        </div>
-      ))}
-      {showPasswordModal && (
-        <PasswordModal
-          onSubmit={handlePasswordSubmit}
-          onCancel={() => setShowPasswordModal(false)}
-        />
-      )}
-      {showAuthKeyModal && authKey && (
-        <AuthKeyModal authKey={authKey} onClose={() => setShowAuthKeyModal(false)} />
-      )}
     </div>
   );
 }

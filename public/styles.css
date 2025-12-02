@@ -8,10 +8,14 @@ html {
 }
 
 .chat {
+  display: inline-flex;
   padding-top: 40px;
   border: 1px solid #ccc;
   border-radius: 5px;
   overflow-y: auto;
+  margin-top: 5rem !important;
+  margin-bottom: 5rem !important;
+  flex-grow: 1;
 }
 
 #root {
