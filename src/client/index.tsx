@@ -164,8 +164,8 @@ function App() {
           <AuthKeyModal authKey={authKey} onClose={() => setShowAuthKeyModal(false)} />
         )}
       </div>
-      <div className="row">
-        <button onClick={handleAuthKeyClick} style={{ marginBottom: "20px" }}>Auth Key</button>
+      <div className="row flex-child-center">
+        <button className="alert" onClick={handleAuthKeyClick} style={{ marginBottom: "20px" }}>Auth Key</button>
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ html {
   border-radius: 5px;
   overflow-y: auto;
   margin-top: 5rem !important;
-  margin-bottom: 5rem !important;
+  margin-bottom: 2rem !important;
   flex-grow: 1;
 }
 
@@ -29,6 +29,12 @@ html {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+.alert {
+  background: indianred !important;
+  border-color: indianred !important;
+  color: white !important;
 }
 
 #root {
