@@ -8,7 +8,7 @@ import {
 import type { ChatMessage, Message } from "../shared";
 
 export class Chat extends Server<Env> {
-  static options = { hibernate: true };
+  static options = { hibernate: false };
 
   messages = [] as ChatMessage[];
 
