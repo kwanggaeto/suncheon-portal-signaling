@@ -1,28 +1,25 @@
-export type ChatMessage = {
-  id: string;
-  content: string;
-  user: string;
-  role: "user" | "assistant";
+export type RtcMessage = {
+  mid: string;
+  uid: string;
+  data: string;
 };
 
 export type Message =
   | {
-      type: "add";
-      id: string;
-      content: string;
-      user: string;
-      role: "user" | "assistant";
+      type: "offer";
+      mid: string;
+      uid: string;
+      data: string;
     }
   | {
-      type: "update";
-      id: string;
-      content: string;
-      user: string;
-      role: "user" | "assistant";
+      type: "answer";
+      mid: string;
+      uid: string;
+      data: string;
     }
   | {
       type: "all";
-      messages: ChatMessage[];
+      messages: RtcMessage[];
     };
 
 export const names = [

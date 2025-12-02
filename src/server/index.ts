@@ -5,12 +5,12 @@ import {
   routePartykitRequest,
 } from "partyserver";
 
-import type { ChatMessage, Message } from "../shared";
+import type { RtcMessage as RtcMessage, Message } from "../shared";
 
 export class Chat extends Server<Env> {
   static options = { hibernate: false };
 
-  messages = [] as ChatMessage[];
+  messages = [] as RtcMessage[];
 
   broadcastMessage(message: Message, exclude?: string[]) {
     this.broadcast(JSON.stringify(message), exclude);
@@ -22,13 +22,13 @@ export class Chat extends Server<Env> {
 
     // create the messages table if it doesn't exist
     this.ctx.storage.sql.exec(
-      `CREATE TABLE IF NOT EXISTS messages (id TEXT PRIMARY KEY, user TEXT, role TEXT, content TEXT)`,
+      `CREATE TABLE IF NOT EXISTS messages (mid TEXT PRIMARY KEY, uid TEXT, data TEXT)`,
     );
 
     // load the messages from the database
     this.messages = this.ctx.storage.sql
       .exec(`SELECT * FROM messages`)
-      .toArray() as ChatMessage[];
+      .toArray() as RtcMessage[];
   }
 
   onConnect(connection: Connection) {
@@ -40,12 +40,12 @@ export class Chat extends Server<Env> {
     );
   }
 
-  saveMessage(message: ChatMessage) {
+  saveMessage(message: RtcMessage) {
     // check if the message already exists
-    const existingMessage = this.messages.find((m) => m.id === message.id);
+    const existingMessage = this.messages.find((m) => m.mid === message.mid);
     if (existingMessage) {
       this.messages = this.messages.map((m) => {
-        if (m.id === message.id) {
+        if (m.mid === message.mid) {
           return message;
         }
         return m;
@@ -55,23 +55,25 @@ export class Chat extends Server<Env> {
     }
 
     this.ctx.storage.sql.exec(
-      `INSERT INTO messages (id, user, role, content) VALUES ('${
-        message.id
-      }', '${message.user}', '${message.role}', ${JSON.stringify(
-        message.content,
-      )}) ON CONFLICT (id) DO UPDATE SET content = ${JSON.stringify(
-        message.content,
+      `INSERT INTO messages (uid, mid, data) VALUES ('${
+        message.mid
+      }', '${
+        message.uid
+      }', ${JSON.stringify(
+        message.data,
+      )}) ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(
+        message.data,
       )}`,
     );
   }
 
   onMessage(connection: Connection, message: WSMessage) {
     // let's broadcast the raw message to everyone else
-    this.broadcast(message);
+    this.broadcast(message, [connection.id]);
 
     // let's update our local messages store
     const parsed = JSON.parse(message as string) as Message;
-    if (parsed.type === "add" || parsed.type === "update") {
+    if (parsed.type === "offer" || parsed.type === "answer") {
       this.saveMessage(parsed);
     }
   }
