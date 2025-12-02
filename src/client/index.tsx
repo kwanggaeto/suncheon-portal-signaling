@@ -11,6 +11,35 @@ import {
 
 import { names, type RtcMessage, type Message } from "../shared";
 
+function PasswordModal({ onSubmit, onCancel }: { onSubmit: (password: string) => void; onCancel: () => void; }) {
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(password);
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h3>Enter Password</h3>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ width: "100%", boxSizing: "border-box" }}
+          />
+          <div style={{ marginTop: "10px" }}>
+            <button type="submit">Submit</button>
+            <button type="button" onClick={onCancel} style={{ marginLeft: "10px" }}>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function AuthKeyModal({ authKey, onClose }: { authKey: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false);
 
@@ -39,10 +68,15 @@ function App() {
   const [messages, setMessages] = useState<RtcMessage[]>([]);
   const { room } = useParams();
   const [authKey, setAuthKey] = useState<string | null>(null);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showAuthKeyModal, setShowAuthKeyModal] = useState(false);
 
-  const handleAuthKeyClick = async () => {
-    const password = prompt("Please enter the administrator password:");
+  const handleAuthKeyClick = () => {
+    setShowPasswordModal(true);
+  };
+
+  const handlePasswordSubmit = async (password: string) => {
+    setShowPasswordModal(false);
     if (password) {
       try {
         const response = await fetch("/auth", {
@@ -122,6 +156,12 @@ function App() {
           <div className="ten columns">{message.data}</div>
         </div>
       ))}
+      {showPasswordModal && (
+        <PasswordModal
+          onSubmit={handlePasswordSubmit}
+          onCancel={() => setShowPasswordModal(false)}
+        />
+      )}
       {showAuthKeyModal && authKey && (
         <AuthKeyModal authKey={authKey} onClose={() => setShowAuthKeyModal(false)} />
       )}
