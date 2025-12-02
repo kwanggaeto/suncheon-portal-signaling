@@ -1,7 +1,8 @@
 export type RtcMessage = {
+  type: string;
   mid: string;
   uid: string;
-  data: string;
+  data: string | null;
 };
 
 export type Message =
@@ -16,6 +17,14 @@ export type Message =
       mid: string;
       uid: string;
       data: string;
+    }
+  | {
+      type: "candidate";
+      mid: string;
+      uid: string;
+      data: string;
+      sdpMid: string;
+      sdpMidLineIndex: number;
     }
   | {
       type: "all";

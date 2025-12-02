@@ -23,7 +23,7 @@ export class Chat extends Server<Env> {
 
     // create the messages table if it doesn't exist
     this.ctx.storage.sql.exec(
-      `CREATE TABLE IF NOT EXISTS messages (mid TEXT PRIMARY KEY, uid TEXT, data TEXT)`,
+      `CREATE TABLE IF NOT EXISTS messages (mid TEXT PRIMARY KEY, uid TEXT, type TEXT, data TEXT)`,
     );
 
     // load the messages from the database
@@ -33,6 +33,9 @@ export class Chat extends Server<Env> {
   }
 
   onConnect(connection: Connection) {
+    var ids = this.messages.map(function(v){
+      return { uid: v.uid, mid: v.mid, type: v.type };
+    });
     connection.send(
       JSON.stringify({
         type: "all",
@@ -56,10 +59,12 @@ export class Chat extends Server<Env> {
     }
 
     this.ctx.storage.sql.exec(
-      `INSERT INTO messages (uid, mid, data) VALUES ('${
+      `INSERT INTO messages (uid, mid, type, data) VALUES ('${
+        message.uid
+      }', '${
         message.mid
       }', '${
-        message.uid
+        message.type
       }', ${JSON.stringify(
         message.data,
       )}) ON CONFLICT (mid) DO UPDATE SET data = ${JSON.stringify(

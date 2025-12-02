@@ -16,7 +16,7 @@ function App() {
   const [messages, setMessages] = useState<RtcMessage[]>([]);
   const { room } = useParams();
 
-  
+
   if (room == null || room == undefined) {
     return (
       <div>The room name is required at the end of the url.</div>
@@ -37,7 +37,8 @@ function App() {
             {
               uid: message.uid,
               mid: message.mid,
-              data: message.data,
+              type: message.type,
+              data: null,
             },
           ]);
         } else {
@@ -50,7 +51,8 @@ function App() {
               .concat({
                 mid: message.mid,
                 uid: message.uid,
-                data: message.data,
+                type: message.type,
+                data: null,
               })
               .concat(messages.slice(foundIndex + 1));
           });
