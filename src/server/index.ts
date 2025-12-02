@@ -87,6 +87,33 @@ export class Chat extends Server<Env> {
 
 export default {
   async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname === "/auth") {
+      if (request.method === "POST") {
+        try {
+          const { password } = (await request.json()) as { password?: string };
+          if (password === "adminadminadmin") {
+            const authKey = "A1B2-C3D4-E5F6"; // This should be stored securely
+            return new Response(JSON.stringify({ key: authKey }), {
+              headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            });
+          }
+        } catch (e) {
+          // fallthrough
+        }
+      }
+      return new Response("Unauthorized", { status: 401, headers: { "Access-Control-Allow-Origin": "*" } });
+    }
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        }
+      })
+    }
+
     return (
       (await routePartykitRequest(request, { ...env })) ||
       env.ASSETS.fetch(request)

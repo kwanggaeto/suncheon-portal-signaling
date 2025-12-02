@@ -11,10 +11,58 @@ import {
 
 import { names, type RtcMessage, type Message } from "../shared";
 
+function AuthKeyModal({ authKey, onClose }: { authKey: string; onClose: () => void }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(authKey).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h3>Authentication Key</h3>
+        <p>Here is your unique key:</p>
+        <pre>{authKey}</pre>
+        <button onClick={handleCopy}>{copied ? "Copied!" : "Copy to Clipboard"}</button>
+        <button onClick={onClose} style={{ marginLeft: "10px" }}>Close</button>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [name] = useState(names[Math.floor(Math.random() * names.length)]);
   const [messages, setMessages] = useState<RtcMessage[]>([]);
   const { room } = useParams();
+  const [authKey, setAuthKey] = useState<string | null>(null);
+  const [showAuthKeyModal, setShowAuthKeyModal] = useState(false);
+
+  const handleAuthKeyClick = async () => {
+    const password = prompt("Please enter the administrator password:");
+    if (password) {
+      try {
+        const response = await fetch("/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setAuthKey(data.key);
+          setShowAuthKeyModal(true);
+        } else {
+          alert("Authentication failed.");
+        }
+      } catch (error) {
+        console.error("Authentication request failed:", error);
+        alert("An error occurred during authentication.");
+      }
+    }
+  };
 
 
   if (room == null || room == undefined) {
@@ -65,12 +113,18 @@ function App() {
 
   return (
     <div className="chat container">
+      <div className="row">
+        <button onClick={handleAuthKeyClick} style={{ marginBottom: "20px" }}>Auth Key</button>
+      </div>
       {messages.map((message) => (
         <div key={message.mid} className="row message">
           <div className="two columns user">{message.uid}</div>
           <div className="ten columns">{message.data}</div>
         </div>
-      ))}      
+      ))}
+      {showAuthKeyModal && authKey && (
+        <AuthKeyModal authKey={authKey} onClose={() => setShowAuthKeyModal(false)} />
+      )}
     </div>
   );
 }
