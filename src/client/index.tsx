@@ -16,6 +16,7 @@ function App() {
   const [messages, setMessages] = useState<RtcMessage[]>([]);
   const { room } = useParams();
 
+  
   if (room == null || room == undefined) {
     return (
       <div>The room name is required at the end of the url.</div>

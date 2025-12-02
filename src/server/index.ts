@@ -17,6 +17,7 @@ export class Chat extends Server<Env> {
   }
 
   onStart() {
+    this.ctx.storage.deleteAll();
     // this is where you can initialize things that need to be done before the server starts
     // for example, load previous messages from a database or a service
 
